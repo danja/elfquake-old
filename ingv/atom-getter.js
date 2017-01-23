@@ -43,14 +43,30 @@ getContent(url)
 // JSON.stringify(result, null, 2)
 
 var process = function(data) {
-  console.log(JSON.stringify(data, null, 2));
+  // console.log(JSON.stringify(data, null, 2));
+  var entries = data["feed"]["entry"];
+  for(i in entries){
+var title = entries[i]["title"][0];
+ var split = title.split(" ");
+ entries[i]["magnitude"] = split[6];
+ entries[i]["place"] = split.splice(10, split.length).join(" ");
+//  console.log(JSON.stringify(split, null, 2));
+var lat = entries[i]["geo:Point"][0]["geo:lat"][0];
+var long = entries[i]["geo:Point"][0]["geo:long"][0];
+console.log(long);
+var eventLat = parseFloat(lat);
+var eventLong = parseFloat(long);
+entries[i]["distance"] = eventDistance(homeLat, homeLong, eventLat, eventLong);
+// console.log(distance);
+JSON.stringify(console.log(entries), null, 2)
+  }
 };
 
 /* Distance between two points using haversine formula */
 
 var R = 6371; // avg radius of Earth, km
 
-var distance = function(lat1, lon1, lat2, lon2){
+const eventDistance = function(lat1, lon1, lat2, lon2){
 var x1 = lat2-lat1;
 var dLat = toRad(x1);
 var x2 = lon2-lon1;
