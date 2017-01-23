@@ -2,6 +2,10 @@ var parseString = require('xml2js').parseString;
 
 const url = 'http://cnt.rm.ingv.it/feed/atom/all_week';
 
+// Mozzanella
+const homeLat = 44.1490514;
+const homeLong = 10.3860636;
+
 /* Dependency-less GET promise from
    https://www.tomas-dvorak.cz/posts/nodejs-request-without-dependencies/ */
 const getContent = function(url) {
@@ -26,6 +30,8 @@ const getContent = function(url) {
     })
 };
 
+
+
 getContent(url)
   .then((xml) =>
   parseString(xml, function (err, result) {
@@ -37,5 +43,27 @@ getContent(url)
 // JSON.stringify(result, null, 2)
 
 var process = function(data) {
-  console.log(JSON.stringify(result, null, 2));
+  console.log(JSON.stringify(data, null, 2));
 };
+
+/* Distance between two points using haversine formula */
+
+var R = 6371; // avg radius of Earth, km
+
+var distance = function(lat1, lon1, lat2, lon2){
+var x1 = lat2-lat1;
+var dLat = toRad(x1);
+var x2 = lon2-lon1;
+var dLon = toRad(x2);
+var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+return R * c;
+};
+
+var toRad = function(x) {
+   return x* Math.PI / 180;
+};
+
+// console.log(distance(lat1, lon1, lat2, lon2));
