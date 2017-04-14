@@ -1,9 +1,10 @@
 # modified version of https://github.com/erikreppel/visualizing_cnns/blob/master/visualize_cnns.ipynb
 # to run from shell with python3
 
+import sys
+
 from keras.layers import Convolution2D, MaxPooling2D, Activation
 from keras.models import Sequential
-
 
 import numpy as np
 import matplotlib
@@ -34,11 +35,11 @@ model.add(Convolution2D(3,    # number of filter layers
 cat_batch = np.expand_dims(cat,axis=0)
 
 ### DANNY
-# For a multi-class classification problem
 model.compile(optimizer='rmsprop',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
-              
+              loss='mean_squared_error')
+
+# sys.exit("danny break")
+
 conv_cat = model.predict(cat_batch)
 
 # here we get rid of that added dimension and plot the image
@@ -46,12 +47,17 @@ def visualize_cat(model, cat):
     # Keras expects batches of images, so we have to add a dimension to trick it into being nice
     cat_batch = np.expand_dims(cat,axis=0)
     conv_cat = model.predict(cat_batch)
+    print(conv_cat.shape)
     conv_cat = np.squeeze(conv_cat, axis=0)
     print(conv_cat.shape)
+    conv_cat = np.squeeze(conv_cat)
+    print(conv_cat.shape)
     plt.imshow(conv_cat)
+    plt.show(cat)
 
 visualize_cat(model, cat)
 
+# sys.exit("danny break")
 
 # 10x10 Kernel ConvCat
 

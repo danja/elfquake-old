@@ -18,7 +18,7 @@ reinstalled python3
 
 Simple check program :
 
-source ~/tensorflow/bin/activate 
+source ~/tensorflow/bin/activate
 python3
 
 >>> import tensorflow as tf
@@ -47,11 +47,8 @@ so tweaked that line (was just block) to :
                 return
 
 
+built tensorflow from source
+buggered about with cudnn versions a lot...
 
-
-
-
-
-
-
-
+set up virtualenv -
+danny@lappie:~/tensorflow$ virtualenv -p python3 --system-site-packages ./                
