@@ -1,0 +1,3 @@
+E tensorflow/stream_executor/cuda/cuda_dnn.cc:390] Loaded runtime CuDNN library: 5004 (compatibility version 5000) but source was compiled with 5110 (compatibility version 5100).  If using a binary install, upgrade your CuDNN library to match.  If building from sources, make sure the library loaded at runtime matches a compatible version specified during compile configuration.
+
+runtime CuDNN library 5110
