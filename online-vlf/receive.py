@@ -27,7 +27,7 @@ state = init_state
 page = bytes(0)
 chunks = bytes(0)
 
-print(response.read(10000).decode("ISO-8859-1"), end='', flush=True)
+print(response.read(10000), end='', flush=True) # .decode("ISO-8859-1")
 
 #while not response.closed:
     # chunks = chunks + response.read(chunk_size)
