@@ -1,0 +1,92 @@
+                        PyMedia Readme
+   Version 1.3.5
+   by Dmitry Borisov http://www.pymedia.org
+   dborisov@pymedia.org
+
+   About
+
+     PyMedia is a Python cross-platfrom library designed to make it easy to
+     write multimedia software, such as multimedia aware apps.
+     Small size makes it perfect for embedded mutlimedia software 
+     development. 
+     It requires the Python language.
+
+   Installation
+
+     The installation is pretty simple is you have Python 2.3+ installed.
+     Just type: "python setup.py build" as normal user and 
+     "python setup.py install" as superuser. You may wish to run latter without
+     the first one. As superuser of course.
+     If you wish to be able to play movies, you'll need SDL/DirectFB to be installed.
+     For Windows users there is a better way of making it work:
+     	Just download binaries from the web site, run it and you're all set.
+
+   Help
+
+     If you want to get started with some hands on experience, just go to the 
+     examples directory. You'll find some usefull but simple examples of how you 
+     can use multimedia features directly from Python. 
+     Then if you need additional information and features description, open the
+     docs/index.html.
+    
+     Visit PyMedia's website( http://pymedia.org/ ), there is documentation
+
+     section as well. 
+     Be aware that the online documentation stays up to date with the development
+     version of PyMedia in cvs. This may be a bit newer than the version of PyMedia you are using.
+
+   Credits
+
+     Thanks to everyone who has helped contribute to this library.
+     Special thanks are also in order.
+
+     Elena K - for creating such a great web site for PyMedia
+     Drew Perttula <drewp@bigasterisk.com> - for making -fPIC fix during installation
+     Matthias Baas <baas@ira.uka.de> - for submitting the patch on better exception naming
+     Lane Dailey <rldailey@blarg.net> - for gcc-3.4.* patch
+
+   Dependencies
+
+     PyMedia has no external dependencies if you use basic funtionality.
+     Hovewer if you want to get more codecs, you should install appropriate 
+     libraries. Here is the list:
+     - libvorbis
+     - libogg
+
+     - mp3lame
+     - libfaad2
+
+   Video playback
+ 
+     In case if you wish to play movies, there are 2 choices:
+
+         1. pygame-1.6.0 with patch
+             http://66.159.221.186/pygame-1.6-overlay.patch.gz
+         2. If you're lucky enough to use one of the DirectFB's supported video card, you may use
+             DirectFB-0.9.20 along with
+             pydfb-1.0.2 from http://sourceforge.net/projects/pymedia/
+            In this case just set PYCAR_DISPLAY=directfb.
+
+   Todo / Ideas
+   
+     * Better external codecs support
+     * Support for dvd hw decoding
+     * Support for usb devices
+
+   License
+
+     This library is distributed under GNU LGPL version 2.1, which can
+     be found in the file "docs/LGPL". I reserve the right to place
+     future versions of this library under a different license.
+     http://www.gnu.org/copyleft/lesser.html
+
+     This basically means you can use PyMedia in any project you want,
+     but if you make any changes or additions to PyMedia itself, those
+     must be released with a compatible license. (preferably submitted
+     back to the PyMedia project). Closed source and commercial apps are
+     fine as long as you provide a way to link against the latest version 
+     of PyMedia.
+
+     The programs in the "examples" directory are in the public domain.  
+  
+  Best wishes ! 
