@@ -1,6 +1,7 @@
 import http.client
 import re
 
+scheme = "http"
 host = "78.46.38.217"
 port = 80
 path = "/vlf15"
@@ -27,21 +28,22 @@ state = init_state
 page = bytes(0)
 chunks = bytes(0)
 
-print(response.read(10000), end='', flush=True) # .decode("ISO-8859-1")
+# print(response.read(10000), end='', flush=True) # .decode("ISO-8859-1")
 
-#while not response.closed:
-    # chunks = chunks + response.read(chunk_size)
-    # match = sync_re.match(chunks)
-    # if match:
-    #     if init_state:
-    #         state = start_state
-    #         continue
-    #     if accumulating_state:
-    #         page = chunks[0 : match.start()-1]
-    #         print("PAGE")
-    #         print(page.decode("ISO-8859-1"))
-    #         page = chunks[match.end()+1 : len(chunks)-1]
-    #         chunks = bytes(0)
+while not response.closed:
+    chunks = chunks + response.read(chunk_size)
+    search = sync_re.search(chunks)
+    print(search.start())
+    if search:
+        if init_state:
+            state = start_state
+            continue
+        if accumulating_state:
+            page = chunks[0 : search.start()-1]
+            print("PAGE")
+            print(page) # .decode("ISO-8859-1")
+            page = chunks[search.end()+1 : len(chunks)-1]
+            chunks = bytes(0)
 
 
     #while state != end_state:

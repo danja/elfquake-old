@@ -51,4 +51,9 @@ built tensorflow from source
 buggered about with cudnn versions a lot...
 
 set up virtualenv -
-danny@lappie:~/tensorflow$ virtualenv -p python3 --system-site-packages ./                
+danny@lappie:~/tensorflow$ virtualenv -p python3 --system-site-packages ./
+
+
+installed python3-soundfile via synaptic
+
+pip install pyzmq            
