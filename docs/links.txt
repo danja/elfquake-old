@@ -1,0 +1,15 @@
+https://github.com/carpedm20/pixel-rnn-tensorflow
+https://github.com/tensorflow/magenta/blob/master/magenta/reviews/pixelrnn.md
+https://github.com/suga93/pixelcnn_keras
+https://github.com/PrajitR/fast-pixel-cnn
+https://github.com/tomlepaine/fast-wavenet
+https://github.com/openai/pixel-cnn
+
+
+https://github.com/fchollet/keras/issues/315
+
+https://www.tensorflow.org/
+
+https://en.wikipedia.org/wiki/Loop_antenna
+
+https://examples.javacodegeeks.com/android/android-videoview-example/
