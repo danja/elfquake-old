@@ -42,16 +42,27 @@ class OggPage:
         self.data = self.data + chunk
 
     def parse(self):
-        self.page_type = self.page[5]
+        self.ogg_marker = self.data[0:4]
+        self.page_type = self.data[5]
 #  The value 1 specifies that the page contains data of a packet continued from the previous page. The value 2 specifies that this is the first page of the stream, and the value 4 specifies that this is the last page of the stream. These values can be combined with addition or logical OR.
-        self.granule_position = self.page[6:14]
-        self.serial_number = self.page[7:18]
-        self.sequence_number = self.page[19:25]
-        self.checksum = self.page[23:27]
-        self.n_segments = self.page[28]
+        self.granule_position = self.data[6:14]
+        self.serial_number = self.data[7:18]
+        self.sequence_number = self.data[19:25]
+        self.checksum = self.data[23:27]
+        self.n_segments = self.data[28]
 
     def __str__(self):
-        return str(self.data)
+        self.parse()
+        string = "\nsize = " + str(len(self.data)) \
+        + "\nogg_marker = " + str(self.ogg_marker) \
+        + "\npage_type = " + str(self.page_type) \
+        + "\ngranule_position =" + str(self.granule_position)  \
+        + "\nserial_number = " + str(self.serial_number) \
+        + "\nsequence_number = " + str(self.sequence_number) \
+        + "\nself.checksum = " + str(self.checksum) \
+        + "\nself.n_segments = " + str(self.n_segments) \
+        + "\ndata =\n" + str(self.data)
+        return string
 
 def handle_page(page):
     print("PAGE")
@@ -62,8 +73,19 @@ def handle_page(page):
 current_page = OggPage()
 current_data = bytes(0)
 
-while not response.closed:
+# for checking
+before_file = open("before_file",'wb')
+before_size = 0
+after_file = open("after_file",'wb')
+after_size = 0
+
+count = 0
+
+while not response.closed and count < 100 :
+    count = count + 1
     chunk = response.read(chunk_size)
+    before_size = before_size + len(chunk)
+    before_file.write(chunk)
     chunks = chunks + chunk
     search = sync_re.search(chunks) # check if there is an Oggs marker
     if search == None:
@@ -72,40 +94,15 @@ while not response.closed:
     # add tail end of previous
     current_page.append(chunks[0:search.start()-1])
     handle_page(current_page)
+    after_size = after_size + len(current_page.data)
+    after_file.write(current_page.data)
     current_page = OggPage()
     print("search.end() = "+str(search.end()))
     print("len(chunks) = "+str(len(chunks)))
     chunks = chunks[:search.end()]
     print("len(chunks) = "+str(len(chunks)))
 
-
-
-    #
-    # if search:
-    #     if init_state:
-    #         page = chunks[0 : search.start()-1]
-    #         state = start_state
-    #         continue
-    #     if accumulating_state:
-    #         print("PAGE")
-    #         print(page) # .decode("ISO-8859-1")
-    #         page = chunks[search.end()+1 : len(chunks)-1]
-    #         chunks = bytes(0)
-
-
-
-
-    #while state != end_state:
-    #    chunk = response.read(chunk_size)
-    #    match = chunk.match(sync_re)
-    #    if match:
-    #        if init_state:
-    #            state = start_state
-    #            break
-    #        page = page + chunk()
-            # m.start(), m.end()
-        # Seek position and read N bytes
-    # binary_file.seek(0)  # Go to beginning
-    # couple_bytes = binary_file.read(2)
-
-    # print(r1.read(200), end='', flush=True)  # 200 bytes
+before_file.close()
+after_file.close()
+print("before_size = "+str(before_size))
+print("after_size = "+str(after_size))
