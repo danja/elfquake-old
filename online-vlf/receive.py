@@ -6,7 +6,9 @@ host = "78.46.38.217"
 port = 80
 path = "/vlf15"
 
+# must be >28 because of headers
 chunk_size = 100
+
 # sync_magic = bytes("OggS", 'utf-8')
 
 # url = "78.46.38.217:80/vlf15"
@@ -14,7 +16,7 @@ connection = http.client.HTTPConnection(host, port)
 connection.request("GET", path)
 response = connection.getresponse()
 print(response.status, response.reason)
-
+print("\n\n\n\n")
 # data1 = r1.read()  # This will return entire content.
 # The following example demonstrates reading data in chunks.
 connection.request("GET", path)
@@ -27,12 +29,12 @@ accumulating_state = 1
 end_state = 2
 
 state = init_state
-page = bytes(0)
-chunks = bytes(0)
+page = b""
+chunks = b""
 
 class OggPage:
     def __init__(self):
-        self.data = bytes(0) # empty bytes
+        self.data = b"" # empty bytes
 
     #    if self.sync_re.match(page_start)
 #        self.page_start = page_start
@@ -53,25 +55,26 @@ class OggPage:
 
     def __str__(self):
         self.parse()
-        string = "\nsize = " + str(len(self.data)) \
+        string = "\npage data size = " + str(len(self.data)) \
         + "\nogg_marker = " + str(self.ogg_marker) \
         + "\npage_type = " + str(self.page_type) \
         + "\ngranule_position =" + str(self.granule_position)  \
         + "\nserial_number = " + str(self.serial_number) \
         + "\nsequence_number = " + str(self.sequence_number) \
         + "\nself.checksum = " + str(self.checksum) \
-        + "\nself.n_segments = " + str(self.n_segments) \
-        + "\ndata =\n" + str(self.data)
+        + "\nself.n_segments = " + str(self.n_segments)
+        # + "\ndata =\n" + str(self.data)
         return string
 
 def handle_page(page):
-    print("PAGE")
+    print("PAGE len(page.data) = ")
     print(len(page.data))
     print(page)
+    print(page.data)
 
 # print(response.read(10000), end='', flush=True) # .decode("ISO-8859-1")
 current_page = OggPage()
-current_data = bytes(0)
+current_data = b""
 
 # for checking
 before_file = open("before_file",'wb')
@@ -81,25 +84,29 @@ after_size = 0
 
 count = 0
 
-while not response.closed and count < 100 :
+while not response.closed and count < 200 :
     count = count + 1
     chunk = response.read(chunk_size)
+
     before_size = before_size + len(chunk)
     before_file.write(chunk)
+
     chunks = chunks + chunk
     search = sync_re.search(chunks) # check if there is an Oggs marker
     if search == None:
         continue
 
     # add tail end of previous
-    current_page.append(chunks[0:search.start()-1])
+    current_page.append(chunks[:search.start()-1])
     handle_page(current_page)
+
     after_size = after_size + len(current_page.data)
     after_file.write(current_page.data)
+
     current_page = OggPage()
-    print("search.end() = "+str(search.end()))
+    print("search.start() = "+str(search.start()))
     print("len(chunks) = "+str(len(chunks)))
-    chunks = chunks[:search.end()]
+    chunks = chunks[:search.start()] ### was end
     print("len(chunks) = "+str(len(chunks)))
 
 before_file.close()
