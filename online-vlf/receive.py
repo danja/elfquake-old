@@ -1,5 +1,5 @@
-import http.client
-import re
+#### NOTE TO SELF -
+#### TRY WITH SOME LOCAL ARTIFICIAL DATA
 
 scheme = "http"
 host = "78.46.38.217"
