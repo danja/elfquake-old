@@ -17,4 +17,9 @@ https://medium.com/@harvitronix/continuous-video-classification-with-tensorflow-
 
 https://en.wikipedia.org/wiki/Loop_antenna
 
+http://www.techlib.com/electronics/vlfwhistle.htm
+
+http://avtanski.net/projects/magnetometer/
+http://spectrum.ieee.org/geek-life/hands-on/how-to-build-a-homebrew-radon-detector
+
 https://examples.javacodegeeks.com/android/android-videoview-example/
