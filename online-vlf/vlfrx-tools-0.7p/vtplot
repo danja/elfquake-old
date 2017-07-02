@@ -1,0 +1,143 @@
+#!/bin/sh
+
+trap 'bailout "interrupted"' INT QUIT KILL
+
+usage(){
+   echo "usage:  vtplot [options] [input] > imagefile" >&2
+   echo "" >&2
+   echo "options:" >&2
+   echo "  -s x,y     Plot size in pixels, default 640,480" >&2
+   echo "  -t title   Title for the plot" >&2
+   echo "  -o format  Specify output image format" >&2
+   echo "             vtplot -o? for available formats" >&2
+   echo "  -g         Enable grid" >&2
+   echo "" >&2
+   echo "  useful -o options are  png, 'png small', x11, gif" >&2
+   exit 1
+}
+
+cleanup(){
+   [ "$TMP" != "" ] && rm -f $TMP
+}
+
+bailout(){
+   echo "vtplot: $*" >&2
+   cleanup
+   exit 1
+}
+
+PSIZE="size 640,480"    # Default size
+TITLE=""                # Plot title
+FORMAT="x11 persist"    # Default terminal type
+GRID=""
+
+#
+#  Parse options
+#
+
+OPTS=`getopt -n vtplot -o gs:t:o:? -- "$@"`
+[ $? != 0 ] && usage
+
+eval set -- "$OPTS"
+
+while :
+do
+   case "$1" in
+
+      -s) PSIZE="size $2" ; shift 2 ;;
+
+      -t) TITLE="title '$2'" ; shift 2 ;;
+
+      -o) FORMAT="$2" ; shift 2 ;;
+
+      -g) GRID="set grid" ; shift ;;
+
+      -\?) usage ;;
+
+      --) shift ; break ;;
+
+       *) bailout "getopt error" ;;
+   esac
+done
+
+#
+#  Get gnuplot to list available terminals if we got -o?
+#
+
+[ "$FORMAT" = "?" ] && {
+   echo "set terminal" | gnuplot 2>&1 | sed '/return for more/d'
+   exit 0
+}
+
+#
+#  Input stream, if any, follows options
+#
+
+INPUT=""   # Defaults to stdin
+[ $# -eq 1 ] && INPUT=$1
+[ $# -gt 1 ] && usage
+
+#
+#  Run the input stream into a temp file in ASCII
+#
+
+TMP=/tmp/vtplot.$$
+vtraw -oa -- $INPUT > $TMP 2> /dev/null
+
+[ $? != 0 ] && bailout "failed to read input stream"
+[ ! -s $TMP ] && bailout "no data was found"
+
+#
+#  Run the data through awk to get the first and last timestamps and
+#  the number of channels
+#
+
+info=`awk '{
+   if( NR == 1) { T1 = $1 ; nc = NF - 1 }
+   T2 = $1
+}END{
+   TBASE = int(T1)
+   printf( "%d %d %.6e %.6e\n", TBASE, nc, T1 - TBASE, T2 - TBASE) 
+}' < $TMP`
+
+eval set -- "$info"
+
+TBASE=$1   # The integer second before the start of the data
+NC=$2      # Number of channels
+T1=$3      # First timestamp, relative to TBASE
+T2=$4      # Last timestamp, relative to TBASE
+
+#
+#  Format TBASE for use in the x-axis label
+# 
+
+FT=`vtdate -si $TBASE`
+
+#
+#  Plot the data 
+#
+
+(
+  echo "
+     set terminal $FORMAT $PSIZE
+     set style data lines
+     unset key
+     set lmargin 10
+     set multiplot layout $NC,1  $TITLE
+     set xrange [$T1:$T2]
+     set mxtics 5
+     $GRID
+     set xlabel 'Time, UT - $FT'
+     "
+
+   c=1
+   while [ $c -le $NC ]
+   do
+      c=$((c + 1))
+      echo "plot '$TMP' using (\$1 - $TBASE):$c"
+   done
+
+) | gnuplot
+
+cleanup
+

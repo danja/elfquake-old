@@ -1,0 +1,9 @@
+#!/bin/sh
+
+opts=$*
+pids=`fuser /tmp/vtprocs 2> /dev/null`
+
+[ "$pids" = "" ] && exit
+
+top $opts -p `echo $pids | sed 's/ /,/g'`
+

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+ok=1
+
+for N in 1 2 3 4 5 6 7 8 9
+do
+   echo "TEST $N ..."
+
+   ./test$N || ok=0
+done
+
+[ $ok -eq 1 ] && echo "All tests passed" || echo "one or more tests failed"
+

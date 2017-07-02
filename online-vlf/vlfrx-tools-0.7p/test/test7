@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Test vttoga and vtspot
+
+. ./testlib
+
+cleanup(){
+   rm -f $TMP.1
+}
+
+set -- `vtgen -r64000 -T0.6,+1.4 -pa=0.1,f=1,d=0.5 |
+           vtmix -c0.743 -c-0.669 -c1 |
+           vttoga -p90,0,E -h0.05 -N1`
+ok=`echo "$2" | awk '($1 > 1-20e-6 && $1 < 1+20e-6)'`
+test "$ok" != ""
+result "t7a $2"
+
+ok=`echo "$3" | awk '($1 > 0.12  && $1 < 0.14)'`
+test "$ok" != ""
+result "t7b $3"
+
+ok=`echo "$6" | awk '($1 > 131.5  && $1 < 132.5)'`
+test "$ok" != ""
+result "t7c $6"
+
+#  Need to think up some tests of vtspot
+
+cleanup
+

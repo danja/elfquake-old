@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# Test vtgen, vtcat, vtcard -d- and vtraw
+
+. ./testlib
+
+cleanup(){
+   rm -f $TMP.test1*
+}
+
+vtgen -r 192000 -na=0.3 | vtcat -E1.60359 > $TMP.test1a
+ns=`sample_count_sr $TMP.test1a`
+test "$ns" -eq 307890
+result "t1 ns=$ns"
+
+vtgen -r 192000 -na=0.3 -T 2010-01-01,+5 > $TMP.test1a
+ns=`sample_count_sr $TMP.test1a`
+test "$ns" -eq 960000
+result "t2 ns=$ns"
+
+vtgen -r 192000 -na=0.3 -T 2010-01-01,+5 > $TMP.test1a
+vtgen -r 192000 -na=0.3 -T 2010-01-01,+5 | vtcat > $TMP.test1b
+diff $TMP.test1a $TMP.test1b > /dev/null
+result "t3"
+ 
+vtgen -r 192000 -na=0.3 -T 2010-01-01,+5 | vtcat | vtcat > $TMP.test1b
+diff $TMP.test1a $TMP.test1b > /dev/null
+result "t4"
+
+vtcat < $TMP.test1a > $TMP.test1b
+diff $TMP.test1a $TMP.test1b > /dev/null
+result "t5"
+
+vtcat $TMP.test1a > $TMP.test1b
+diff $TMP.test1a $TMP.test1b > /dev/null
+result "t6"
+
+vtgen -r 192000 -na=0.3 -Tnow,+1.60359 | vtraw > $TMP.test1a
+ns=`wc -c < $TMP.test1a`
+test "$ns" -eq 615780
+result "t7 ns=$ns"
+
+executable vtcard && {
+   vtcard -d- -r 192000 -b16 -c1 < $TMP.test1a > $TMP.test1b
+   ns=`sample_count_sr $TMP.test1b`
+   test "$ns" -eq 307890
+   result "t8 ns=$ns"
+} || skip t8
+
+# Padding test
+vtgen -r 192000 -na=0.3 -T 2010-01-01_00:00:00,+5 > $TMP.test1a
+vtgen -r 192000 -na=0.3 -T 2010-01-01_00:00:05.5,+5 >> $TMP.test1a
+vtcat -p $TMP.test1a > $TMP.test1b
+ns=`sample_count_sr $TMP.test1b`
+test "$ns" -eq $((192000 * 10 + 96000))
+result "t9 ns=$ns"
+
+cleanup
+

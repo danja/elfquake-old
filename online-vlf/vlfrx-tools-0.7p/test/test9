@@ -1,0 +1,70 @@
+#!/bin/sh
+
+# Test vtmatch and vtconv
+
+. ./testlib
+
+cleanup(){
+   [ "$TMP" != "" ] && rm -f $TMP.test9*
+}
+
+# Template consisting of one unit sample
+echo 1 > $TMP.test9tp1
+
+# Check output matches input when using a template having a single sample
+# of 1.0
+
+vtgen -r32000 -T2014-02-20,+5 -na=0.1 > $TMP.test9a
+
+vtmatch -t $TMP.test9tp1 $TMP.test9a > $TMP.test9b
+
+
+vtjoin $TMP.test9a $TMP.test9b - | vtmix -c1,-1 > $TMP.test9c
+peak=`vtstat -i $TMP.test9c | grep peak | sed 's/.*,//'`
+ok=`echo "$peak" | awk '($1 < 1e-10)'`
+test "$ok" != ""
+result "t9a1 $peak"
+
+# Check start time
+t=`vtstat -i $TMP.test9b | grep start | sed 's/start: //'`
+test "$t" = "2014-02-20_00:00:00.000000"
+result "t9a2"
+
+# Check end time
+t=`vtstat -i $TMP.test9b | grep 'end:' | sed 's/end: //
+                                              s/,.*$//'`
+test "$t" = "2014-02-20_00:00:05.000000"
+result "t9a3"
+
+# Same checks as above, this time in convolution mode
+
+vtmatch -c -t $TMP.test9tp1 $TMP.test9a > $TMP.test9b
+
+vtjoin $TMP.test9a $TMP.test9b - | vtmix -c1,-1 > $TMP.test9c
+peak=`vtstat -i $TMP.test9c | grep peak | sed 's/.*,//'`
+ok=`echo "$peak" | awk '($1 < 1e-10)'`
+test "$ok" != ""
+result "t9b1 $peak"
+
+# Check start time
+t=`vtstat -i $TMP.test9b | grep start | sed 's/start: //'`
+test "$t" = "2014-02-20_00:00:00.000000"
+result "t9b2"
+
+# Check end time
+t=`vtstat -i $TMP.test9b | grep 'end:' | sed 's/end: //
+                                              s/,.*$//'`
+test "$t" = "2014-02-20_00:00:05.000000"
+result "t9b3"
+
+# Test with input shorter than FT width
+
+vtgen -r32000 -T2014-02-20,+0.05 -na=0.1 > $TMP.test9a
+
+vtmatch -t $TMP.test9tp1 $TMP.test9a > $TMP.test9b
+
+# Check start time
+t=`vtstat -i $TMP.test9b | grep start | sed 's/start: //'`
+test "$t" = "2014-02-20_00:00:00.000000"
+result "t9c1"
+

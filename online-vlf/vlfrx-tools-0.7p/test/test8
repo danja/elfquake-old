@@ -1,0 +1,61 @@
+#!/bin/sh
+
+# Various tests, vtdate, vtraw, vtdata
+
+. ./testlib
+
+cleanup(){
+   rm -f $TMP.1
+}
+
+set -- `vtdate 2012-05-30_12:55:59.345678`
+
+test "$1" = 1338382559.345678
+result "t8a1 $1"
+
+test "$2" = 2012-05-30_12:55:59.345678
+result "t8a2 $2"
+
+t=`vtdate -nt61 2012-05-30_12:55:59.345678`
+test "$t" = 1338382517.000000
+result "t8b1 $t"
+
+t=`vtdate -nt0.0001 2012-05-30_12:55:59.345678`
+test "$t" = 1338382559.345600
+result "t8b2 $t"
+ 
+t=`vtdate -n -a1e-6  2012-05-30_12:55:59.345678`
+test "$t" = 1338382559.345679
+result "t8b3 $t"
+
+set -- `vtdate -n 2012-05-30_12:55:59.345678,+1.5s`
+test "$1" = 1338382559.345678
+result "t8c1 $1"
+
+test "$2" = 1338382560.845678 
+result "t8c2 $2"
+
+vtgen -c2 -r32000 -s a=0.1,f=1000 -T2015-01-01,+2 |
+    vtraw -oa | vtdata -r32000 -c2 -i | vtstat -i > $TMP.1
+
+t=`awk '($1 == "start:"){print $2}' < $TMP.1`
+test "$t" = 2015-01-01_00:00:00.000000
+result "t8d1 $t"
+
+t=`awk '($1 == "end:"){print $2}' < $TMP.1`
+test "$t" = 2015-01-01_00:00:02.000000,
+result "t8d2 $t"
+
+t=`awk '($1 == "mean,rms,peak:" && $2 == 1){print $3}' < $TMP.1`
+test "$t" = 6.346e-02,7.071e-02,1.000e-01
+result "t8d3 $t"
+
+vtgen -c2 -r32000 -s a=0.1,f=1000 -T2015-01-01,+2 |
+    vtraw -oa | vtdata -r32000 -c2 -i -T2016-01-01 | vtstat -i > $TMP.1
+
+t=`awk '($1 == "start:"){print $2}' < $TMP.1`
+test "$t" = 2016-01-01_00:00:00.000000
+result "t8e1 $t"
+
+cleanup
+

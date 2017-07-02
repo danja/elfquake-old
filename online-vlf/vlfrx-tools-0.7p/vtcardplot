@@ -1,0 +1,115 @@
+#!/bin/sh
+
+trap 'bailout "interrupted"' INT QUIT KILL
+
+usage(){
+   echo "usage:  vtcardplot [options] vtcard_logfile > imagefile" >&2
+   echo "" >&2
+   echo "options:" >&2
+   echo "  -d yyyy-mm-dd   Plot just this day (default all)" >&2
+   echo "  -s x,y          Plot size in pixels, default 640,480" >&2
+   echo "  -o format       Specify output image format" >&2
+   echo "                  vtplot -o? for available formats" >&2
+   echo "" >&2
+   echo "  useful -o options are  png, 'png small', x11, gif" >&2
+   exit 1
+}
+
+cleanup(){
+   [ "$TMP" != "" ] && rm -f $TMP
+}
+
+bailout(){
+   echo "vtcardplot: $*" >&2
+   cleanup
+   exit 1
+}
+
+PSIZE="size 640,480"    # Default size
+FORMAT="x11 persist"    # Default terminal type
+DAY=""
+
+#
+#  Parse options
+#
+
+OPTS=`getopt -n vtcardplot -o s:o:d:? -- "$@"`
+[ $? != 0 ] && usage
+
+eval set -- "$OPTS"
+
+while :
+do
+   case "$1" in
+
+      -s) PSIZE="size $2" ; shift 2 ;;
+
+      -d) DAY="$2" ; shift 2 ;;
+
+      -o) FORMAT="$2" ; shift 2 ;;
+
+      -\?) usage ;;
+
+      --) shift ; break ;;
+
+       *) bailout "getopt error" ;;
+   esac
+done
+
+#
+#  Get gnuplot to list available terminals if we got -o?
+#
+
+[ "$FORMAT" = "?" ] && {
+   echo "set terminal" | gnuplot 2>&1 | sed '/return for more/d'
+   exit 0
+}
+
+#
+#  vtcard's logfile name follows options
+#
+
+[ $# -ne 1 ] && usage
+SOURCE=$1
+
+[ ! -s $SOURCE ] && bailout "$SOURCE missing or empty"
+
+day=`echo $DAY | sed 's/-/\//g'`
+
+TMP=/tmp/vtcardplot.$$
+awk '{
+   if( day != "" && $1 != day) next
+   if( $3 == "setup")
+   {
+      if( no) setup = 1
+   }
+   else
+   if( $3 == "run")
+   {
+      if( setup) printf( "\n")
+      setup = 0
+      print
+      no++
+   }
+ }' "day=$day" < $SOURCE > $TMP
+
+echo "
+   set terminal $FORMAT $PSIZE
+   set xdata time
+   set timefmt '%Y/%m/%d %H:%M:%S'
+   set format x '%H:%M'
+   set style data lines
+   set lmargin 13
+   unset key
+   set multiplot layout 2,1 title '$SOURCE $DAY'
+   set ylabel 'Offset, mS'
+   plot '$TMP' using 1:12
+   set format y '%9.2f'
+   set ylabel 'Sample rate - Hz'
+   set xlabel 'HH:MM UT'
+   plot '$TMP' using 1:6
+  " | gnuplot
+
+cleanup
+
+

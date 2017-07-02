@@ -1,0 +1,119 @@
+#!/bin/sh
+
+# Test vtcmp, propagation delay compensations in vtfilter, vtresample,
+# vtvorbis and vtflac.
+
+. ./testlib
+
+cleanup(){
+   [ "$TMP" != "" ] && rm -f $TMP.test5*
+}
+
+vtgen -s a=0.1,f=1200,p=25 -r 10000 -T2010-01-01_00:00:00.0,+5 > $TMP.test5a
+vtgen -s a=0.1,f=1200,p=255 -r 10000 -T2010-01-01_00:00:00.0,+5 > $TMP.test5b
+vtjoin $TMP.test5a $TMP.test5b $TMP.test5c
+
+gsort(){
+   awk '{
+      if( maxt == "" || max+0 < $2) { maxt = $1 ; max = $2 }
+   }END{
+      printf( "%.5f", maxt)
+   }'
+}
+
+# Check vtcmp phase comparison
+
+p=`vtcmp -m pd360 -w1 $TMP.test5c | awk '($1 == 1200){printf( "%.3f", $4)}'`
+test "$p" = "130.000"
+result "t1a p=$p"
+
+p=`vtcmp -m pd180 -w1 $TMP.test5c | awk '($1 == 1200){printf( "%.3f", $4)}'`
+test "$p" = "-50.000"
+result "t1b p=$p"
+
+# Check vtcmp auto-correlation
+
+vtgen -a0 -n a=0.5 -r 10000 -T2011-01-01_00:00:00,+5 > $TMP.test5a
+vtgen -a0 -n a=0.5 -r 10000 -T2011-01-01_00:00:00.015,+5 > $TMP.test5b
+vtjoin $TMP.test5a $TMP.test5a $TMP.test5c
+cor=`vtcmp -m cor -w 0.1 $TMP.test5c | awk '($1 == 0){printf( "%.3f", $2)}'`
+test "$cor" = "1.000" -o "$cor" = "0.999"
+result "t2a cor=$cor"
+
+# Check vtcmp cross-correlation
+
+vtjoin $TMP.test5a $TMP.test5b $TMP.test5c
+offset=`vtcmp -m cor -w 0.1 $TMP.test5c | gsort`
+test "$offset" = "0.01500"
+result "t2b offset=$offset"
+
+# Check vtfilter propagation delay compensation
+
+vtgen -p a=0.085,f=1,p=180.0,d=0.5 -r 10000 -T2010-01-01,+5 > $TMP.test5a
+vtgen -p a=0.085,f=1,p=180.0,d=0.5 -r 27000 -T2010-01-01,+5 > $TMP.test5b
+
+vtfilter $TMP.test5a $TMP.test5c
+vtjoin $TMP.test5a $TMP.test5c $TMP.test5d
+offset=`vtcmp -m cor -w1.0 $TMP.test5d | gsort`
+test "$offset" = "0.00000"
+result "t3a offset=$offset"
+
+# Check vtresample propagation delay compensation - downsampling
+
+executable vtresample && {
+   vtresample -q2 -r 10000 $TMP.test5b $TMP.test5c
+   vtjoin $TMP.test5a $TMP.test5c $TMP.test5d
+
+   offset=`vtcmp -m cor -w1.0 $TMP.test5d | gsort`
+   test "$offset" = "0.00000"
+   result "t3b offset=$offset"
+} || skip t3b
+
+# Check vtresample propagation delay compensation - upsampling
+
+executable vtresample && {
+   vtgen -a0 -n a=0.1 -r71000 -T2010-01-01,+5 > $TMP.test5a
+   
+   vtresample -r29000 $TMP.test5a | vtresample -r71000 > $TMP.test5b
+   vtjoin $TMP.test5a $TMP.test5b $TMP.test5c
+   offset=`vtcmp -m cor -w1.0 $TMP.test5c | gsort`
+   
+   test "$offset" = "0.00000"
+   result "t3c offset=$offset"
+} || skip t3c
+
+# Check vtvorbis timestamp forwarding
+
+executable vtvorbis && {
+   vtgen -a0 -n a=0.1 -r48000 -T2010-01-01,+5 > $TMP.test5a
+   vtvorbis -e -q0.4 $TMP.test5a | vtvorbis -d > $TMP.test5b
+   
+   vtjoin $TMP.test5a $TMP.test5b $TMP.test5c
+   
+   offset=`vtcmp -m cor -w1.0 $TMP.test5c | gsort`
+   test "$offset" = "0.00000"
+   result "t4 offset=$offset"
+} || skip t4
+
+# Check vtvr2 encode/decode timestamp forwarding
+
+vtgen -r40000 -a0 -na=0.3 -T2010-01-01,+10 > $TMP.test5a
+vtvr2 -e < $TMP.test5a | vtvr2 -d > $TMP.test5b
+vtjoin $TMP.test5a $TMP.test5b $TMP.test5c
+offset=`vtcmp -m cor -w1.0 $TMP.test5c | gsort`
+test "$offset" = "0.00000"
+result "t5 offset=$offset"
+
+executable vtflac && {
+   vtgen -a0 -n a=0.1 -r48000 -T2010-01-01,+5 > $TMP.test5a
+   vtflac -e $TMP.test5a | vtflac -d > $TMP.test5b
+   
+   vtjoin $TMP.test5a $TMP.test5b $TMP.test5c
+   
+   offset=`vtcmp -m cor -w1.0 $TMP.test5c | gsort`
+   test "$offset" = "0.00000"
+   result "t6 offset=$offset"
+} || skip t6
+
+cleanup
+

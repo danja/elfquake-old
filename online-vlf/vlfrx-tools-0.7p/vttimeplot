@@ -1,0 +1,146 @@
+#!/bin/sh
+
+trap 'bailout "interrupted"' INT QUIT KILL
+
+usage(){
+   echo "usage:  vttimeplot [options] vttime_logfile > imagefile" >&2
+   echo "" >&2
+   echo "options:" >&2
+   echo "  -d yyyy-mm-dd   Plot just this day (default all)" >&2
+   echo "  -t title        Title for the plot (default logfile name)" >&2
+   echo "  -s x,y          Plot size in pixels, default 640,480" >&2
+   echo "  -o format       Specify output image format" >&2
+   echo "                  vtplot -o? for available formats" >&2
+   echo "" >&2
+   echo "  useful -o options are  png, 'png small', x11, gif" >&2
+   exit 1
+}
+
+cleanup(){
+   [ "$TMP" != "" ] && rm -f $TMP.data $TMP.setup
+}
+
+bailout(){
+   echo "vttimeplot: $*" >&2
+   cleanup
+   exit 1
+}
+
+PSIZE="size 640,480"    # Default size
+FORMAT="x11 persist"    # Default terminal type
+DAY=""
+TITLE=""
+
+#
+#  Parse options
+#
+
+OPTS=`getopt -n vttimeplot -o s:t:o:d:? -- "$@"`
+[ $? != 0 ] && usage
+
+eval set -- "$OPTS"
+
+while :
+do
+   case "$1" in
+
+      -s) PSIZE="size $2" ; shift 2 ;;
+
+      -t) TITLE="$2" ; shift 2 ;;
+
+      -d) DAY="$2" ; shift 2 ;;
+
+      -o) FORMAT="$2" ; shift 2 ;;
+
+      -\?) usage ;;
+
+      --) shift ; break ;;
+
+       *) bailout "getopt error" ;;
+   esac
+done
+
+#
+#  Get gnuplot to list available terminals if we got -o?
+#
+
+[ "$FORMAT" = "?" ] && {
+   echo "set terminal" | gnuplot 2>&1 | sed '/return for more/d'
+   exit 0
+}
+
+#
+#  vttime's logfile name follows options
+#
+
+[ $# -ne 1 ] && usage
+SOURCE=$1
+
+[ ! -s $SOURCE ] && bailout "$SOURCE missing or empty"
+
+[ "$TITLE" = "" ] && TITLE="$SOURCE $DAY"
+
+day=`echo $DAY | sed 's/-/\//g'`
+
+TMP=/tmp/vttimeplot.$$
+awk '{
+
+   if( day != "" && $1 != day) next
+
+   daylist[$1] = 1;
+
+   if( $3 == "st0")
+   {
+      if( no) setup = 1
+      cache = ""
+   }
+   else
+   if( $3 == "st2")
+   {
+      if( setup) printf( "\n")
+      setup = 0
+      if( cache != "") { print cache ; cache = "" }
+      cache = $0
+      no++
+   }
+ }END{
+    if( cache != "") { print cache ; cache = "" }
+    days = 0
+    for( day in daylist) days++
+
+    setup = TMP ".setup"
+
+    if( days > 1)
+    {
+       printf( "set format x %c%s%c\n", 39, "%d_%H:%M", 39) >> setup
+       printf( "set xlabel %c%s%c\n", 39, "DD_HH:MM UT", 39) >> setup
+    }
+    else
+    {
+       printf( "set format x %c%s%c\n", 39, "%H:%M", 39) >> setup
+       printf( "set xlabel %c%s%c\n", 39, "HH:MM UT", 39) >> setup
+    }
+
+ }' "TMP=$TMP" "day=$day" < $SOURCE > $TMP.data
+
+echo "
+   set terminal $FORMAT $PSIZE
+   set xdata time
+   set timefmt '%Y/%m/%d %H:%M:%S'
+   `cat $TMP.setup`
+   set style data lines
+   set lmargin 13
+   unset key
+   set multiplot layout 3,1 title '$TITLE'
+   set ylabel 'PPS sigma, uS'
+   plot '$TMP.data' using 1:7
+   set ylabel 'Offset, uS'
+   plot '$TMP.data' using 1:11
+   set format y '%9.2f'
+   set ylabel 'Sample rate - Hz'
+   plot '$TMP.data' using 1:15
+  " | gnuplot
+
+cleanup
+
+
