@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+       #map {
+        height: 400px;
+        width: 100%;
+       }
+    </style>
+  </head>
+  <body>
+    <h3>Area Filter</h3>
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        // 40N-47N
+        // 7E-15E
+        var left = 7;
+        var right = 15;
+        var top = 47;
+        var bottom = 40;
+
+        var topLeft = {lat: top, lng: left};
+        var topRight =  {lat: top, lng: right};
+        var bottomLeft =  {lat: bottom, lng: left};
+        var bottomRight =  {lat: bottom, lng: right};
+
+        var renato = {lat: 44.96, lng: 7.42};
+        var mozz = {lat: 44.1490514, lng: 10.3860636};
+
+        var centerPoint =  {lat: (top+bottom)/2, lng: (left+right)/2};
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 5,
+          center: centerPoint
+        });
+
+        var markerTL = new google.maps.Marker({
+          position: topLeft,
+          map: map
+        });
+        var markerTR = new google.maps.Marker({
+          position: topRight,
+          map: map
+        });
+        var markerBL = new google.maps.Marker({
+          position: bottomLeft,
+          map: map
+        });
+        var markerBR = new google.maps.Marker({
+          position: bottomRight,
+          map: map
+        });
+
+        var markerRenato = new google.maps.Marker({
+          position: renato,
+          map: map
+        });
+
+        var markerMozz = new google.maps.Marker({
+          position: mozz,
+          map: map
+        });
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBW68zWU2_IXVZUe0T4WEeB6ivU4-67dYk&callback=initMap">
+    </script>
+  </body>
+</html>
