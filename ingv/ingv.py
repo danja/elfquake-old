@@ -10,9 +10,6 @@ import http.client
 
 import xml.etree.ElementTree as ET
 
-#import io
-#import itertools as IT
-
 
 class INGV():
     def __init__(self):
@@ -22,16 +19,17 @@ class INGV():
 
         # service dates are UTC, though it shouldn't matter here
         self.startDate = dateutil.parser.parse("2010-01-01T00:00:00Z")
-        self.endDate = dateutil.parser.parse("2010-02-10T00:00:00Z")
+        self.endDate = dateutil.parser.parse("2011-01-01T00:00:00Z")
 
-        self.windowHours = 6
-        self.windows_per_file = 4*60 # 2 month blocks
+        self.windowHours = 6 # 4 per day
+        self.windows_per_file =  4*60 # 2 month blocks
 
-
-        self.data_dir = "./csv_data/"
+        self.data_dir = "./csv_data/raw/"
 
         self.sample_domain = "webservices.ingv.it"
         self.sample_path = "/fdsnws/event/1/query?starttime=2010-01-01T00:00:00&endtime=2010-01-01T06:00:00"
+
+        self.pause = 0.25 # delay between GETs to be kinder to the service
 
         self.csv = ""
 
@@ -49,7 +47,7 @@ class INGV():
             endString = endString[0:19]
             query = '?starttime=' + startString + '&endtime=' + endString
             path = self.endpoint + query
-            sleep(1) # don't hammer the service
+            sleep(self.pause) # don't hammer the service
             xml = self.get_xml(self.domain, path)
             self.csv = self.csv + self.extract_data(xml,query)
             window_count = window_count + 1
@@ -63,8 +61,8 @@ class INGV():
 
     # using low-level version to log connection issues
     def get_xml(self, domain, path):
-        print("PATH = "+path)
-        connection = http.client.HTTPConnection(domain, timeout=5)
+        # print("PATH = "+path)
+        connection = http.client.HTTPConnection(domain, timeout=20)
         connection.request('GET', path)
         response = connection.getresponse()
         # print('{} {} - a response on a GET request by using "http.client"'.format(response.status, response.reason))
@@ -86,7 +84,7 @@ class INGV():
 
 
 
-    def extract_data(self,xml,query): # query is only for debugging bad results
+    def extract_data(self,xml,query): # query is for debugging bad results
         ns = "{http://quakeml.org/xmlns/bed/1.2}"
         # print(xml+"\n\n\n")
         try:

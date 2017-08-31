@@ -1,3 +1,10 @@
+### Project-specific ###
+
+csv_data/raw/
+
+
+
+### Lots of boilerplate ###
 cuda-etc/
 
 ## Python-oriented
