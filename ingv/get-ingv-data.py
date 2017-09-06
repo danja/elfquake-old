@@ -18,8 +18,8 @@ class INGV():
         self.endpoint = "/fdsnws/event/1/query"
 
         # service dates are UTC, though it shouldn't matter here
-        self.startDate = dateutil.parser.parse("2010-01-01T00:00:00Z")
-        self.endDate = dateutil.parser.parse("2011-01-01T00:00:00Z")
+        self.startDate = dateutil.parser.parse("2007-01-01T00:00:00Z")
+        self.endDate = dateutil.parser.parse("2017-08-30T00:00:00Z")
 
         self.windowHours = 6 # 4 per day
         self.windows_per_file =  4*60 # 2 month blocks
