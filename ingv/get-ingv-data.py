@@ -10,6 +10,12 @@ import http.client
 
 import xml.etree.ElementTree as ET
 
+        ## ''Aquila 6 April 2009 > 5 mag
+        # 42.3476°N 13.3800°ECoordinates: 42.3476°N 13.3800°E[1]
+
+        # http://webservices.ingv.it/fdsnws/event/1/query?starttime=2009-04-01T00:00:00&endtime=2009-04-10T00:00:00
+
+# curl -i "http://webservices.ingv.it/fdsnws/event/1/query?starttime=2010-01-01T00:00:00&endtime=2010-01-01T06:00:00"
 
 class INGV():
     def __init__(self):
@@ -18,18 +24,19 @@ class INGV():
         self.endpoint = "/fdsnws/event/1/query"
 
         # service dates are UTC, though it shouldn't matter here
-        self.startDate = dateutil.parser.parse("2007-01-01T00:00:00Z")
+        self.startDate = dateutil.parser.parse("1997-01-01T00:00:00Z")
         self.endDate = dateutil.parser.parse("2017-08-30T00:00:00Z")
 
-        self.windowHours = 6 # 4 per day
-        self.windows_per_file =  4*60 # 2 month blocks
+        self.windowHours = 1 # 4 per day
+        self.windows_per_file =  24*60 # 2 month blocks
 
         self.data_dir = "./csv_data/raw/"
 
         self.sample_domain = "webservices.ingv.it"
         self.sample_path = "/fdsnws/event/1/query?starttime=2010-01-01T00:00:00&endtime=2010-01-01T06:00:00"
 
-        self.pause = 0.25 # delay between GETs to be kinder to the service
+        self.pause = 0.2 # delay between GETs to be kinder to the service
+        self.timeout = 300 # for the G5 mins - sometimes it takes a long time
 
         self.csv = ""
 
@@ -62,7 +69,7 @@ class INGV():
     # using low-level version to log connection issues
     def get_xml(self, domain, path):
         # print("PATH = "+path)
-        connection = http.client.HTTPConnection(domain, timeout=20)
+        connection = http.client.HTTPConnection(domain, timeout=self.timeout)
         connection.request('GET', path)
         response = connection.getresponse()
         # print('{} {} - a response on a GET request by using "http.client"'.format(response.status, response.reason))

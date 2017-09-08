@@ -8,6 +8,14 @@ class Aggregate():
     def __init__(self):
         self.csv_dir = "./csv_data/raw/"
         # 40N-47N, 7E-15E - northern Italy
+
+        ## ''Aquila 6 April 2009 > 5 mag
+        # 42.3476°N 13.3800°ECoordinates: 42.3476°N 13.3800°E[1]
+
+        # http://webservices.ingv.it/fdsnws/event/1/query?starttime=2009-04-01T00:00:00&endtime=2009-04-10T00:00:00
+
+        # hmm, note magnitude 6.1 in Emilia-Romagna 2012
+        # 44.9°N 11.24°E
         self.min_latitude = 40
         self.max_latitude = 47
         self.min_longitude = 7
@@ -52,7 +60,7 @@ class Aggregate():
                     in_zone_count = in_zone_count + 1
                     depth = float(row[3].strip())
                     magnitude = float(row[4].strip())
-                    if magnitude > 8:
+                    if magnitude > 4:
                         print(row)
                     if depth > max_depth:
                         max_depth = depth
