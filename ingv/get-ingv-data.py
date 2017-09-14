@@ -24,6 +24,8 @@ class INGV():
         self.endpoint = "/fdsnws/event/1/query"
 
         # service dates are UTC, though it shouldn't matter here
+
+        # self.startDate = dateutil.parser.parse("2009-04-01T00:00:00Z") l'Aquila
         self.startDate = dateutil.parser.parse("1997-01-01T00:00:00Z")
         self.endDate = dateutil.parser.parse("2017-08-30T00:00:00Z")
 
@@ -34,8 +36,8 @@ class INGV():
 #geographic-constraints=boundaries-rect
         self.region_string = "geographic-constraints=boundaries-rect&minlat="+minlat+"&maxlat="+maxlat+"&minlon="+minlon+"&maxlon="+maxlon
 
-        self.windowHours = 3 #
-        self.windows_per_file =  6*30 # 30 day blocks
+        self.windowHours = 1 #
+        self.windows_per_file =  24*30 # 30 day blocks
 
         self.data_dir = "./csv_data/raw/"
 
@@ -83,7 +85,7 @@ class INGV():
     # using low-level version to log connection issues
     def get_xml(self, domain, path):
         # print("PATH = "+path)
-        connection = http.client.HTTPConnection(domain) # , timeout=self.timeout
+        connection = http.client.HTTPConnection(domain, timeout=self.timeout) # , timeout=self.timeout
         connection.request('GET', path)
         response = connection.getresponse()
         url = "http://"+domain+path
