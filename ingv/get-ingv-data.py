@@ -27,16 +27,23 @@ class INGV():
         self.startDate = dateutil.parser.parse("1997-01-01T00:00:00Z")
         self.endDate = dateutil.parser.parse("2017-08-30T00:00:00Z")
 
-        self.windowHours = 1 # 4 per day
-        self.windows_per_file =  24*60 # 2 month blocks
+        minlat = "40"
+        maxlat = "47"
+        minlon = "7"
+        maxlon = "15"
+#geographic-constraints=boundaries-rect
+        self.region_string = "geographic-constraints=boundaries-rect&minlat="+minlat+"&maxlat="+maxlat+"&minlon="+minlon+"&maxlon="+maxlon
+
+        self.windowHours = 3 #
+        self.windows_per_file =  6*30 # 30 day blocks
 
         self.data_dir = "./csv_data/raw/"
 
         self.sample_domain = "webservices.ingv.it"
         self.sample_path = "/fdsnws/event/1/query?starttime=2010-01-01T00:00:00&endtime=2010-01-01T06:00:00"
 
-        self.pause = 0.2 # delay between GETs to be kinder to the service
-        self.timeout = 300 # for the G5 mins - sometimes it takes a long time
+        self.pause = 0.1 # delay between GETs to be kinder to the service
+        self.timeout = 300 # for the GET 5 mins - sometimes it takes a long time
 
         self.csv = ""
 
@@ -52,11 +59,18 @@ class INGV():
             startWindow = startWindow + datetime.timedelta(hours=self.windowHours)
             endString = datetime.datetime.isoformat(startWindow)
             endString = endString[0:19]
-            query = '?starttime=' + startString + '&endtime=' + endString
+            query = "?"+self.region_string
+            query = query + '&starttime=' + startString + '&endtime=' + endString
             path = self.endpoint + query
             sleep(self.pause) # don't hammer the service
-            xml = self.get_xml(self.domain, path)
-            self.csv = self.csv + self.extract_data(xml,query)
+
+            try:
+                xml = self.get_xml(self.domain, path)
+            except ValueError as err:
+                print(err)
+                print()
+            if xml != "":
+                self.csv = self.csv + self.extract_data(xml,query)
             window_count = window_count + 1
             if(window_count == self.windows_per_file):
                 window_count = 0
@@ -69,15 +83,22 @@ class INGV():
     # using low-level version to log connection issues
     def get_xml(self, domain, path):
         # print("PATH = "+path)
-        connection = http.client.HTTPConnection(domain, timeout=self.timeout)
+        connection = http.client.HTTPConnection(domain) # , timeout=self.timeout
         connection.request('GET', path)
         response = connection.getresponse()
-        # print('{} {} - a response on a GET request by using "http.client"'.format(response.status, response.reason))
-        if(response.status != 200):
-            url = "http://"+domain+path
-            message = "Unexpected response from \n"+url+"\nHTTP"+str(response.status)+"  "+response.reason+"\n"
-            self.errors = self.errors + message
-        content = response.read().decode('utf-8')
+        url = "http://"+domain+path
+        print("Query: "+url+"\n")
+        if(response.status == 204): # no content
+            return ""
+        if(response.status == 200):
+            content = response.read().decode('utf-8')
+        else:
+            http_error = "HTTP "+str(response.status)+"  "+response.reason
+            message = "Unexpected response from \n"+url+"\n"+http_error
+            content = ""
+            if response.status < 200 or response.status >= 300:
+                self.errors = self.errors + message
+                raise ValueError(http_error)
         return content
 
         # xmlns="http://quakeml.org/xmlns/bed/1.2"
@@ -105,6 +126,7 @@ class INGV():
 
         eventParameters = root.find(ns+'eventParameters')
         current = ""
+        count = 0
         for event in eventParameters.findall(ns+'event'):
             origin_element = event.find(ns+'origin')
             time = origin_element.find(ns+'time').find(ns+'value').text
@@ -115,8 +137,10 @@ class INGV():
             magnitude_element = event.find(ns+'magnitude')
             magnitude = magnitude_element.find(ns+'mag').find(ns+'value').text
 
+            count = count + 1
             current = current + time+", "+latitude+", "+longitude+", "+depth+", "+magnitude+"\n"
-            return current
+        print("\nEvents from query = "+str(count)+"\n")
+        return current
 
     def save_text(self, filename, text):
         with open(filename, 'w') as file:
