@@ -26,7 +26,9 @@ class INGV():
         # service dates are UTC, though it shouldn't matter here
 
         # self.startDate = dateutil.parser.parse("2009-04-01T00:00:00Z") l'Aquila
-        self.startDate = dateutil.parser.parse("1997-01-01T00:00:00Z")
+    
+        # self.startDate = dateutil.parser.parse("1997-01-01T00:00:00Z") proper
+        self.startDate = dateutil.parser.parse("2010-03-10T18:00:00Z") # temp
         self.endDate = dateutil.parser.parse("2017-08-30T00:00:00Z")
 
         minlat = "40"
