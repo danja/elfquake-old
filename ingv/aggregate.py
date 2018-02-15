@@ -1,15 +1,19 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import glob
 import csv
 import numpy as np
 from numpy import genfromtxt
+import gc # garbage collection
 import hickle as hkl
+
 
 class Aggregate():
     def __init__(self):
         self.csv_dir = "./csv_data/raw/"
         # 40N-47N, 7E-15E - northern Italy
 
-        ## ''Aquila 6 April 2009 > 5 mag
+        # ''Aquila 6 April 2009 > 5 mag
         # 42.3476°N 13.3800°ECoordinates: 42.3476°N 13.3800°E[1]
 
         # http://webservices.ingv.it/fdsnws/event/1/query?starttime=2009-04-01T00:00:00&endtime=2009-04-10T00:00:00
@@ -22,11 +26,15 @@ class Aggregate():
         self.max_longitude = 15
 
     def main(self):
-        count = self.count_records() # hopelessly inefficient, but who cares, data is smallish
-        print("COUNT = "+str(count))
+        # hopelessly inefficient, but who cares, data is smallish
+        # hah! not once looking at matrix...
+        count = self.count_records()
+        print("COUNT = " + str(count))
+        gc.collect()
         X = self.load_records(count)
 
-            # 2007-01-02T05:28:38.870000, 43.612, 12.493, 7700, 1.7
+        hkl.dump(X, 'seismo.hkl')
+        # 2007-01-02T05:28:38.870000, 43.612, 12.493, 7700, 1.7
 
 # 2007-01-02T05:28:38.870000, 43.612, 12.493, 7700, 1.7
     def load_records(self, count):
@@ -35,15 +43,17 @@ class Aggregate():
         max_depth = 0
         max_magnitude = 0
 
-        X = np.zeros((count, 128, 128), np.float32) # , n_depth, n_mag
+        X = np.zeros((count, 128, 128), np.float16)  # , n_depth, n_mag
+        # X = np.zeros((count, 128, 128), np.float32)  # , n_depth, n_mag
+        # gave Memory Error
 
         pattern = self.csv_dir + "*.csv"
 
         for filename in glob.glob(pattern):
 
-            with open(filename, newline='\n') as csvfile:
-                 reader = csv.reader(csvfile, delimiter=',')
-                 for row in reader:
+            with open(filename) as csvfile: # , newline='\n'
+                reader = csv.reader(csvfile, delimiter=',')
+                for row in reader:
                     # print(row)
                     date_string = row[0].strip()
                     datetime = np.datetime64(date_string)
@@ -67,17 +77,15 @@ class Aggregate():
                     if magnitude > max_magnitude:
                         max_magnitude = magnitude
 
-        print("in_zone_count = "+str(in_zone_count))
-        print("max_depth = "+str(max_depth))
-        print("max_magnitude = "+str(max_magnitude))
+        print("in_zone_count = " + str(in_zone_count))
+        print("max_depth = " + str(max_depth))
+        print("max_magnitude = " + str(max_magnitude))
         return X
 
-            #        latitude = scale_lat(latitude)
-            #        longitude = scale_lat(longitude)
+        #        latitude = scale_lat(latitude)
+        #        longitude = scale_lat(longitude)
 
-            # read csv file and fill in X
-
-            # hkl.dump(X, 'data.hkl')
+        # read csv file and fill in X
 
     def count_records(self):
         count = 0
@@ -85,7 +93,7 @@ class Aggregate():
         pattern = self.csv_dir + "*.csv"
 
         for filename in glob.glob(pattern):
-            with open(filename, newline='\n') as csvfile:
+            with open(filename) as csvfile: # , newline='\n'
                 reader = csv.reader(csvfile, delimiter=',')
                 for row in reader:
                     count = count + 1
@@ -96,12 +104,14 @@ class Aggregate():
         return count
     # is the point within the region of interest?
     # 40N-47N, 7E-15E - northern Italy
+
     def in_zone(self, latitude, longitude):
         if latitude < self.min_latitude or latitude >= self.max_latitude:
             return False
         if longitude < self.min_longitude or longitude >= self.max_longitude:
             return False
         return True
+
 
 if __name__ == "__main__":
     Aggregate().main()
