@@ -1,5 +1,5 @@
 '''
-Train PredNet on INGV sequences.
+Train PredNet on KITTI sequences. (Geiger et al. 2013, http://www.cvlibs.net/datasets/kitti/)
 '''
 
 import os
@@ -17,12 +17,12 @@ from keras.optimizers import Adam
 
 from prednet import PredNet
 from data_utils import SequenceGenerator
-from ingv_settings import *
+from kitti_settings import *
 
 
 save_model = True  # if weights will be saved
-weights_file = os.path.join(WEIGHTS_DIR, 'prednet_ingv_weights.hdf5')  # where weights will be saved
-json_file = os.path.join(WEIGHTS_DIR, 'prednet_ingv_model.json')
+weights_file = os.path.join(WEIGHTS_DIR, 'prednet_kitti_weights.hdf5')  # where weights will be saved
+json_file = os.path.join(WEIGHTS_DIR, 'prednet_kitti_model.json')
 
 # Data files
 train_file = os.path.join(DATA_DIR, 'X_train.hkl')
@@ -31,9 +31,9 @@ val_file = os.path.join(DATA_DIR, 'X_val.hkl')
 val_sources = os.path.join(DATA_DIR, 'sources_val.hkl')
 
 # Training parameters
-nb_epoch = 50 # was 150
-batch_size = 2 # was 4
-samples_per_epoch = 250 # was 500
+nb_epoch = 150
+batch_size = 4
+samples_per_epoch = 500
 N_seq_val = 100  # number of sequences to use for validation
 
 # Model parameters
@@ -57,7 +57,7 @@ prednet = PredNet(stack_sizes, R_stack_sizes,
 
 inputs = Input(shape=(nt,) + input_shape)
 errors = prednet(inputs)  # errors will be (batch_size, nt, nb_layers)
-errors_by_time = TimeDistributed(Dense(1, weights=[layer_loss_weights, np.zeros(1)], trainable=False), trainable=False)(errors)  # calculate weighted error by layer
+errors_by_time = TimeDistributed(Dense(1, trainable=False), weights=[layer_loss_weights, np.zeros(1)], trainable=False)(errors)  # calculate weighted error by layer
 errors_by_time = Flatten()(errors_by_time)  # will be (batch_size, nt)
 final_errors = Dense(1, weights=[time_loss_weights, np.zeros(1)], trainable=False)(errors_by_time)  # weight errors by time
 model = Model(inputs=inputs, outputs=final_errors)
