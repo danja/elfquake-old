@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="US-ASCII" standalone="yes"?>
+<q:quakeml xmlns:q="http://quakeml.org/xmlns/quakeml/1.2" xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:ingv="http://webservices.ingv.it/fdsnws/event/1">
+  <eventParameters publicID="smi:webservices.ingv.it/fdsnws/event/1/query">
+    <event publicID="smi:webservices.ingv.it/fdsnws/event/1/query?eventId=2144339">
+      <type>earthquake</type>
+      <description>
+        <type>region name</type>
+        <text>1 km W Roccafluvione (AP)</text>
+      </description>
+      <preferredMagnitudeID>smi:webservices.ingv.it/fdsnws/event/1/query?magnitudeId=1775889</preferredMagnitudeID>
+      <preferredOriginID>smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003519</preferredOriginID>
+      <creationInfo>
+        <agencyID>INGV</agencyID>
+        <author>BULLETIN-SISPICK</author>
+        <creationTime>2013-04-19T10:15:37</creationTime>
+      </creationInfo>
+      <origin publicID="smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003519">
+        <evaluationMode>manual</evaluationMode>
+        <type>hypocenter</type>
+        <time>
+          <value>2010-01-02T16:47:36.740000</value>
+          <uncertainty>0.1</uncertainty>
+        </time>
+        <latitude>
+          <value>42.861</value>
+          <uncertainty>0.0018</uncertainty>
+        </latitude>
+        <longitude>
+          <value>13.465</value>
+          <uncertainty>0.0049</uncertainty>
+        </longitude>
+        <depth>
+          <value>22400</value>
+          <uncertainty>1100</uncertainty>
+        </depth>
+        <depthType>from location</depthType>
+        <originUncertainty>
+          <preferredDescription>uncertainty ellipse</preferredDescription>
+          <horizontalUncertainty>447.2</horizontalUncertainty>
+          <minHorizontalUncertainty>76</minHorizontalUncertainty>
+          <maxHorizontalUncertainty>380</maxHorizontalUncertainty>
+          <azimuthMaxHorizontalUncertainty>88</azimuthMaxHorizontalUncertainty>
+          <confidenceLevel>68</confidenceLevel>
+        </originUncertainty>
+        <quality>
+          <azimuthalGap>227</azimuthalGap>
+          <associatedPhaseCount>9</associatedPhaseCount>
+          <usedPhaseCount>8</usedPhaseCount>
+          <standardError>0.07</standardError>
+          <minimumDistance>0.00000</minimumDistance>
+          <maximumDistance>0.43437</maximumDistance>
+          <associatedStationCount>5</associatedStationCount>
+          <usedStationCount>4</usedStationCount>
+        </quality>
+        <evaluationStatus>reviewed</evaluationStatus>
+        <methodID>smi:webservices.ingv.it/fdsnws/event/1/query?methodId=2</methodID>
+        <earthModelID>smi:webservices.ingv.it/fdsnws/event/1/query?earthModelId=7</earthModelID>
+        <creationInfo>
+          <agencyID>INGV</agencyID>
+          <author>BULLETIN-SISPICK</author>
+          <version>1000</version>
+          <creationTime>2017-06-19T10:51:08</creationTime>
+        </creationInfo>
+      </origin>
+      <magnitude publicID="smi:webservices.ingv.it/fdsnws/event/1/query?magnitudeId=1775889">
+        <originID>smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003519</originID>
+        <type>ML</type>
+        <mag>
+          <value>1.9</value>
+          <uncertainty>0.2</uncertainty>
+        </mag>
+        <methodID>smi:webservices.ingv.it/fdsnws/event/1/query?methodId=2</methodID>
+        <creationInfo>
+          <agencyID>INGV</agencyID>
+          <author>Bollettino Sismico Italiano INGV</author>
+          <creationTime>2013-01-05T19:14:09</creationTime>
+        </creationInfo>
+      </magnitude>
+    </event>
+    <event publicID="smi:webservices.ingv.it/fdsnws/event/1/query?eventId=2144329">
+      <type>earthquake</type>
+      <description>
+        <type>region name</type>
+        <text>3 km SE Marradi (FI)</text>
+      </description>
+      <preferredMagnitudeID>smi:webservices.ingv.it/fdsnws/event/1/query?magnitudeId=1775869</preferredMagnitudeID>
+      <preferredOriginID>smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003509</preferredOriginID>
+      <creationInfo>
+        <agencyID>INGV</agencyID>
+        <author>BULLETIN-SISPICK</author>
+        <creationTime>2013-04-19T10:15:37</creationTime>
+      </creationInfo>
+      <origin publicID="smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003509">
+        <evaluationMode>manual</evaluationMode>
+        <type>hypocenter</type>
+        <time>
+          <value>2010-01-02T16:21:56.290000</value>
+          <uncertainty>0.12</uncertainty>
+        </time>
+        <latitude>
+          <value>44.049</value>
+          <uncertainty>0.0063</uncertainty>
+        </latitude>
+        <longitude>
+          <value>11.633</value>
+          <uncertainty>0.0038</uncertainty>
+        </longitude>
+        <depth>
+          <value>9800</value>
+          <uncertainty>200</uncertainty>
+        </depth>
+        <depthType>from location</depthType>
+        <originUncertainty>
+          <preferredDescription>uncertainty ellipse</preferredDescription>
+          <horizontalUncertainty>761.6</horizontalUncertainty>
+          <minHorizontalUncertainty>234</minHorizontalUncertainty>
+          <maxHorizontalUncertainty>666</maxHorizontalUncertainty>
+          <azimuthMaxHorizontalUncertainty>3</azimuthMaxHorizontalUncertainty>
+          <confidenceLevel>68</confidenceLevel>
+        </originUncertainty>
+        <quality>
+          <azimuthalGap>277</azimuthalGap>
+          <associatedPhaseCount>9</associatedPhaseCount>
+          <usedPhaseCount>6</usedPhaseCount>
+          <standardError>0.08</standardError>
+          <minimumDistance>0.00000</minimumDistance>
+          <maximumDistance>0.27699</maximumDistance>
+          <associatedStationCount>6</associatedStationCount>
+          <usedStationCount>3</usedStationCount>
+        </quality>
+        <evaluationStatus>reviewed</evaluationStatus>
+        <methodID>smi:webservices.ingv.it/fdsnws/event/1/query?methodId=2</methodID>
+        <earthModelID>smi:webservices.ingv.it/fdsnws/event/1/query?earthModelId=7</earthModelID>
+        <creationInfo>
+          <agencyID>INGV</agencyID>
+          <author>BULLETIN-SISPICK</author>
+          <version>1000</version>
+          <creationTime>2017-06-19T10:51:08</creationTime>
+        </creationInfo>
+      </origin>
+      <magnitude publicID="smi:webservices.ingv.it/fdsnws/event/1/query?magnitudeId=1775869">
+        <originID>smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003509</originID>
+        <type>ML</type>
+        <mag>
+          <value>1.6</value>
+          <uncertainty>0.2</uncertainty>
+        </mag>
+        <methodID>smi:webservices.ingv.it/fdsnws/event/1/query?methodId=2</methodID>
+        <creationInfo>
+          <agencyID>INGV</agencyID>
+          <author>Bollettino Sismico Italiano INGV</author>
+          <creationTime>2013-01-05T19:14:08</creationTime>
+        </creationInfo>
+      </magnitude>
+    </event>
+    <event publicID="smi:webservices.ingv.it/fdsnws/event/1/query?eventId=2144319">
+      <type>earthquake</type>
+      <description>
+        <type>region name</type>
+        <text>NE Ocre (AQ)</text>
+      </description>
+      <preferredMagnitudeID>smi:webservices.ingv.it/fdsnws/event/1/query?magnitudeId=1775849</preferredMagnitudeID>
+      <preferredOriginID>smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003499</preferredOriginID>
+      <creationInfo>
+        <agencyID>INGV</agencyID>
+        <author>BULLETIN-SISPICK</author>
+        <creationTime>2013-04-19T10:15:37</creationTime>
+      </creationInfo>
+      <origin publicID="smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003499">
+        <evaluationMode>manual</evaluationMode>
+        <type>hypocenter</type>
+        <time>
+          <value>2010-01-02T15:19:04.790000</value>
+          <uncertainty>0.11</uncertainty>
+        </time>
+        <latitude>
+          <value>42.288</value>
+          <uncertainty>0.0072</uncertainty>
+        </latitude>
+        <longitude>
+          <value>13.478</value>
+          <uncertainty>0.0097</uncertainty>
+        </longitude>
+        <depth>
+          <value>10200</value>
+          <uncertainty>700</uncertainty>
+        </depth>
+        <depthType>from location</depthType>
+        <originUncertainty>
+          <preferredDescription>uncertainty ellipse</preferredDescription>
+          <horizontalUncertainty>1131.4</horizontalUncertainty>
+          <minHorizontalUncertainty>797</minHorizontalUncertainty>
+          <maxHorizontalUncertainty>868</maxHorizontalUncertainty>
+          <azimuthMaxHorizontalUncertainty>15</azimuthMaxHorizontalUncertainty>
+          <confidenceLevel>68</confidenceLevel>
+        </originUncertainty>
+        <quality>
+          <azimuthalGap>113</azimuthalGap>
+          <associatedPhaseCount>14</associatedPhaseCount>
+          <usedPhaseCount>10</usedPhaseCount>
+          <standardError>0.39</standardError>
+          <minimumDistance>0.00000</minimumDistance>
+          <maximumDistance>0.34714</maximumDistance>
+          <associatedStationCount>8</associatedStationCount>
+          <usedStationCount>5</usedStationCount>
+        </quality>
+        <evaluationStatus>reviewed</evaluationStatus>
+        <methodID>smi:webservices.ingv.it/fdsnws/event/1/query?methodId=2</methodID>
+        <earthModelID>smi:webservices.ingv.it/fdsnws/event/1/query?earthModelId=7</earthModelID>
+        <creationInfo>
+          <agencyID>INGV</agencyID>
+          <author>BULLETIN-SISPICK</author>
+          <version>1000</version>
+          <creationTime>2017-06-19T10:51:08</creationTime>
+        </creationInfo>
+      </origin>
+      <magnitude publicID="smi:webservices.ingv.it/fdsnws/event/1/query?magnitudeId=1775849">
+        <originID>smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003499</originID>
+        <type>ML</type>
+        <mag>
+          <value>1.5</value>
+          <uncertainty>0.1</uncertainty>
+        </mag>
+        <methodID>smi:webservices.ingv.it/fdsnws/event/1/query?methodId=2</methodID>
+        <creationInfo>
+          <agencyID>INGV</agencyID>
+          <author>Bollettino Sismico Italiano INGV</author>
+          <creationTime>2013-01-05T19:14:07</creationTime>
+        </creationInfo>
+      </magnitude>
+    </event>
+    <event publicID="smi:webservices.ingv.it/fdsnws/event/1/query?eventId=2144309">
+      <type>earthquake</type>
+      <description>
+        <type>region name</type>
+        <text>3 km SW Fontecchio (AQ)</text>
+      </description>
+      <preferredMagnitudeID>smi:webservices.ingv.it/fdsnws/event/1/query?magnitudeId=1775829</preferredMagnitudeID>
+      <preferredOriginID>smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003489</preferredOriginID>
+      <creationInfo>
+        <agencyID>INGV</agencyID>
+        <author>BULLETIN-SISPICK</author>
+        <creationTime>2013-04-19T10:15:37</creationTime>
+      </creationInfo>
+      <origin publicID="smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003489">
+        <evaluationMode>manual</evaluationMode>
+        <type>hypocenter</type>
+        <time>
+          <value>2010-01-02T14:03:54.580000</value>
+          <uncertainty>0.13</uncertainty>
+        </time>
+        <latitude>
+          <value>42.211</value>
+          <uncertainty>0.0054</uncertainty>
+        </latitude>
+        <longitude>
+          <value>13.59</value>
+          <uncertainty>0.0109</uncertainty>
+        </longitude>
+        <depth>
+          <value>7200</value>
+          <uncertainty>1000</uncertainty>
+        </depth>
+        <depthType>from location</depthType>
+        <originUncertainty>
+          <preferredDescription>uncertainty ellipse</preferredDescription>
+          <horizontalUncertainty>1081.7</horizontalUncertainty>
+          <minHorizontalUncertainty>555</minHorizontalUncertainty>
+          <maxHorizontalUncertainty>806</maxHorizontalUncertainty>
+          <azimuthMaxHorizontalUncertainty>82</azimuthMaxHorizontalUncertainty>
+          <confidenceLevel>68</confidenceLevel>
+        </originUncertainty>
+        <quality>
+          <azimuthalGap>117</azimuthalGap>
+          <associatedPhaseCount>17</associatedPhaseCount>
+          <usedPhaseCount>10</usedPhaseCount>
+          <standardError>0.34</standardError>
+          <minimumDistance>0.00000</minimumDistance>
+          <maximumDistance>0.52700</maximumDistance>
+          <associatedStationCount>14</associatedStationCount>
+          <usedStationCount>7</usedStationCount>
+        </quality>
+        <evaluationStatus>reviewed</evaluationStatus>
+        <methodID>smi:webservices.ingv.it/fdsnws/event/1/query?methodId=2</methodID>
+        <earthModelID>smi:webservices.ingv.it/fdsnws/event/1/query?earthModelId=7</earthModelID>
+        <creationInfo>
+          <agencyID>INGV</agencyID>
+          <author>BULLETIN-SISPICK</author>
+          <version>1000</version>
+          <creationTime>2017-06-19T10:51:08</creationTime>
+        </creationInfo>
+      </origin>
+      <magnitude publicID="smi:webservices.ingv.it/fdsnws/event/1/query?magnitudeId=1775829">
+        <originID>smi:webservices.ingv.it/fdsnws/event/1/query?originId=1003489</originID>
+        <type>ML</type>
+        <mag>
+          <value>1.7</value>
+          <uncertainty>0.0</uncertainty>
+        </mag>
+        <methodID>smi:webservices.ingv.it/fdsnws/event/1/query?methodId=2</methodID>
+        <creationInfo>
+          <agencyID>INGV</agencyID>
+          <author>Bollettino Sismico Italiano INGV</author>
+          <creationTime>2013-01-05T19:14:07</creationTime>
+        </creationInfo>
+      </magnitude>
+    </event>
+  </eventParameters>
+</q:quakeml>

@@ -1,0 +1,59 @@
+downloaded cuda 8.0.61  using network deb - must have installed before, just did a small update
+https://developer.nvidia.com/cuda-downloads
+
+extracted the examples per instructions, rebooted
+Mandelbrot ran fine
+
+installing TensorFlow via virtualenv
+...
+ (tensorflow)$ pip3 install --upgrade tensorflow-gpu # for Python 3.n and GPU
+..
+
+it appears I'd already got Anaconda installed, and it was messing up the path (tensorflow import not found)
+
+so uninstalled Anaconda per site instructions
+
+reinstalled python3
+
+
+Simple check program :
+
+source ~/tensorflow/bin/activate
+python3
+
+>>> import tensorflow as tf
+>>> hello = tf.constant('Hello, TensorFlow!')
+>>> sess = tf.Session()
+>>> print(sess.run(hello))
+
+import matplotlib.pyplot as plt
+plt.plot([1,2,3,4])
+plt.ylabel('some numbers')
+plt.show()
+
+I got error :
+  File "/home/danny/.local/lib/python3.5/site-packages/matplotlib/backend_bases.py", line 166, in __call__
+    if block:
+ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+
+so tweaked that line (was just block) to :
+
+        if block is not None:
+#danny
+            if block.any():
+                self.mainloop()
+                return
+            else:
+                return
+
+
+built tensorflow from source
+buggered about with cudnn versions a lot...
+
+set up virtualenv -
+danny@lappie:~/tensorflow$ virtualenv -p python3 --system-site-packages ./
+
+
+installed python3-soundfile via synaptic
+
+pip install pyzmq            
