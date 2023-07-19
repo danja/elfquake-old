@@ -17,8 +17,13 @@ channels: 1
 
 # TRAINING
 lr: 0.0003
-batch_size: 50
-num_epochs: 300
+
+
+# batch_size: 50
+batch_size: 8
+
+# num_epochs: 300
+num_epochs: 100
 
 # SUMMARIES
 logdir: null

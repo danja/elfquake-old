@@ -22,7 +22,7 @@ levels: 3
 logdir: log
 lr: 0.0003
 model_dir_prefix: null
-num_epochs: 300
+num_epochs: 100
 num_val_batches: 1
 open_loop_ctx: 36
 save_gifs: true

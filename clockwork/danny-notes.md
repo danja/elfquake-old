@@ -33,4 +33,8 @@ oops!
 
 =>
 
-.venv/bin/python3 train.py --logdir log --datadir datasets --config configs/mmnist.yml 
+cd elfquake/clockwork
+
+time .venv/bin/python3 train.py --logdir log --datadir datasets --config configs/mmnist.yml 
+
+time .venv/bin/python3 eval.py --logdir log --config configs/mmnist.yml 
